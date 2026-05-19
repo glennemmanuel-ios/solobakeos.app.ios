@@ -12,9 +12,17 @@ import SwiftData
 struct SoloBakeOSApp: App {
     var sharedModelContainer: ModelContainer = {
         let schema = Schema([
-            Item.self,
+            Ingredient.self,
+            InventoryTransaction.self,
+            BreadRecipe.self,
+            RecipeIngredient.self,
+            RecipePriceHistory.self,
+            ProductionOrder.self,
+            ProductionOrderEdit.self,
         ])
-        let modelConfiguration = ModelConfiguration(schema: schema, isStoredInMemoryOnly: false)
+        let modelConfiguration = ModelConfiguration(
+            schema: schema,
+            isStoredInMemoryOnly: false)
 
         do {
             return try ModelContainer(for: schema, configurations: [modelConfiguration])
