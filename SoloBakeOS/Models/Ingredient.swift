@@ -12,6 +12,7 @@ class Ingredient {
     
     var name: String
     var unit: Unit
+    var customUnitLabel: String?
     var reorderLevel: Double
     
     @Relationship(deleteRule: .cascade, inverse: \InventoryTransaction.ingredient)
@@ -54,7 +55,7 @@ extension Ingredient {
         case pcs
         case tsp
         case tbsp
-        case custom(String)
+        case custom
         
     }
     

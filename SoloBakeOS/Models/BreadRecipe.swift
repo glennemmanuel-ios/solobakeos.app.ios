@@ -15,15 +15,17 @@ class BreadRecipe {
     var version: Int
     var isCurrentVersion: Bool
     var recipeGroupID: UUID // links all versions of the same recipe
+    var yield: Int // how many pieces this recipe produces
     
     @Relationship(deleteRule: .cascade, inverse: \RecipeIngredient.recipe)
     var recipeIngredients: [RecipeIngredient] = []
     
-    init(name: String, version: Int = 1, isCurrentVersion: Bool = true, recipeGroupID: UUID = UUID()) {
+    init(name: String, version: Int = 1, isCurrentVersion: Bool = true, recipeGroupID: UUID = UUID(), yield: Int) {
         self.name = name
         self.version = version
         self.isCurrentVersion = isCurrentVersion
         self.recipeGroupID = recipeGroupID
+        self.yield = yield
     }
     
 }
@@ -35,10 +37,13 @@ extension BreadRecipe {
     /// Total ingredient cost to produce `quantity` units.
     /// = Σ(recipeIngredient.quantity × ingredient.weightedAverageCost) × quantity
     func costOfGoods(quantity: Int) -> Double {
-        let costPerUnit = recipeIngredients.reduce(0.0) { total, item in
+        // total ingredient cost for one full batch
+        let batchCost = recipeIngredients.reduce(0.0) { total, item in
             total + (item.quantity * item.ingredient.weightedAverageCost)
         }
-        return costPerUnit * Double(quantity)
+        // cost per piece × requested quantity
+        let costPerPiece = batchCost / Double(yield)
+        return costPerPiece * Double(quantity)
     }
 
     /// Latest selling price for this recipe group.
@@ -69,7 +74,7 @@ extension BreadRecipe {
 
 extension BreadRecipe {
 
-    enum MarginStatus {
+    enum MarginStatus: Codable {
         case good       // > 30% 🟢
         case warning    // 15–30% 🟡
         case critical   // < 15% 🔴
