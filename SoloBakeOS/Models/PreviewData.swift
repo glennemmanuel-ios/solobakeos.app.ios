@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import SwiftData
 
 struct PreviewData {
     
@@ -16,6 +17,22 @@ struct PreviewData {
     static let milkPowder: Ingredient = .init(name: "Milk Powder", unit: .kg, reorderLevel: 10)
     static let salt: Ingredient = .init(name: "Salt", unit: .kg, reorderLevel: 10)
     static let dessicatedCoconut: Ingredient = .init(name: "Dessicated Coconut", unit: .kg, reorderLevel: 0.5)
+    
+    static var previewContainer: ModelContainer {
+        let config = ModelConfiguration(isStoredInMemoryOnly: true)
+        let container = try! ModelContainer(for: Ingredient.self, configurations: config)
+
+        // Seed transactions
+        let t1 = InventoryTransaction(date: .now, quantity: 25, unitCost: 39, reason: .openingStock, ingredient: flour)
+        flour.transactions = [t1]
+        // ... rest of your seeds
+
+        let all = [flour]
+        for item in all {
+            container.mainContext.insert(item)
+        }
+        return container
+    }
     
     static func sanityCheck() {
         // Seed transactions (to test WAC + currentStock)
