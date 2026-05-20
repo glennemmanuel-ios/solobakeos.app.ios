@@ -39,11 +39,17 @@ extension BreadRecipe {
     func costOfGoods(quantity: Int) -> Double {
         // total ingredient cost for one full batch
         let batchCost = recipeIngredients.reduce(0.0) { total, item in
-            total + (item.quantity * item.ingredient.weightedAverageCost)
+            let cost = item.quantity * item.ingredient.weightedAverageCost
+            let roundedCost = ceil(cost)
+            print("Ingredient: \(item.ingredient.name), cost: \(roundedCost)")
+            return total + roundedCost
         }
         // cost per piece × requested quantity
-        let costPerPiece = batchCost / Double(yield)
-        return costPerPiece * Double(quantity)
+        let costPerPiece = ceil(batchCost / Double(yield))
+        let overheadMargin = ceil(costPerPiece * 0.4)
+        print("Overhead Margin: \(overheadMargin)")
+        let finalCostPerPiece = costPerPiece + overheadMargin
+        return finalCostPerPiece * Double(quantity)
     }
 
     /// Latest selling price for this recipe group.
