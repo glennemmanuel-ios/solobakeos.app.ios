@@ -46,7 +46,7 @@ class Ingredient {
 
 extension Ingredient {
     
-    enum Unit: String, Codable {
+    enum Unit: String, Codable, CaseIterable {
         
         case g
         case kg
