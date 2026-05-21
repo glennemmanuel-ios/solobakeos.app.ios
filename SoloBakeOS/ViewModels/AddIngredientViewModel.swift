@@ -21,13 +21,11 @@ class AddIngredientViewModel {
         Double(reorderLevel) != nil
     }
 
-    func save(context: ModelContext) {
-        guard let reorderDouble = Double(reorderLevel) else { return }
-
+    func save(context: ModelContext) -> Ingredient {
         let ingredient = Ingredient(
             name: name.trimmingCharacters(in: .whitespaces),
             unit: selectedUnit,
-            reorderLevel: reorderDouble
+            reorderLevel: Double(reorderLevel) ?? 0
         )
 
         if selectedUnit == .custom {
@@ -35,5 +33,6 @@ class AddIngredientViewModel {
         }
 
         context.insert(ingredient)
+        return ingredient
     }
 }

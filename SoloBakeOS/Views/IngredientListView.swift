@@ -11,6 +11,7 @@ import SwiftData
 struct IngredientListView: View {
     @Query private var ingredients: [Ingredient]
     @State private var viewModel = ViewModel()
+    @State private var showAddIngredient = false
 
     var body: some View {
         NavigationStack {
@@ -42,11 +43,21 @@ struct IngredientListView: View {
                 }
                 .padding(.vertical, 4)
             }
+            .toolbar(content: {
+                ToolbarItem(placement: .primaryAction) {
+                    Button { showAddIngredient = true } label: {
+                        Label("Add Ingredient", systemImage: "plus")
+                    }
+                }
+            })
             .navigationTitle("Inventory")
             .overlay {
                 if ingredients.isEmpty {
                     ContentUnavailableView("No Ingredients", systemImage: "shippingbox", description: Text("Add your first ingredient to get started."))
                 }
+            }
+            .sheet(isPresented: $showAddIngredient) {
+                AddIngredientView()
             }
         }
     }

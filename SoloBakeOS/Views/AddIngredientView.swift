@@ -12,6 +12,7 @@ struct AddIngredientView: View {
     @Environment(\.modelContext) private var context
     @Environment(\.dismiss) private var dismiss
     @State private var viewModel = AddIngredientViewModel()
+    @State private var newIngredient: Ingredient?
 
     var body: some View {
         NavigationStack {
@@ -43,12 +44,19 @@ struct AddIngredientView: View {
                 }
                 ToolbarItem(placement: .confirmationAction) {
                     Button("Save") {
-                        viewModel.save(context: context)
-                        dismiss()
+                        let ingredient = viewModel.save(context: context)
+                        newIngredient = ingredient
                     }
                     .disabled(!viewModel.isFormValid)
+                    .sheet(item: $newIngredient) { ingredient in
+                        OpeningStockSheet(ingredient: ingredient)
+                            .interactiveDismissDisabled()
+                    }
                 }
             }
+        }
+        .onChange(of: newIngredient) { _, newValue in
+            if newValue == nil { dismiss() }
         }
     }
 }
