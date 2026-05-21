@@ -16,32 +16,34 @@ struct IngredientListView: View {
     var body: some View {
         NavigationStack {
             List(ingredients) { ingredient in
-                HStack {
-                    VStack(alignment: .leading) {
-                        Text(ingredient.name)
-                            .font(.headline)
-                        Text("Weighted Average Cost: \(viewModel.formattedWeightedAverageCost(ingredient: ingredient)) / \(ingredient.unit.rawValue)")
-                            .font(.caption)
-                            .foregroundStyle(.secondary)
-                    }
+                NavigationLink(destination: IngredientDetailView(ingredient: ingredient)) {
+                    HStack {
+                        VStack(alignment: .leading) {
+                            Text(ingredient.name)
+                                .font(.headline)
+                            Text("Weighted Average Cost: \(viewModel.formattedWeightedAverageCost(ingredient: ingredient)) / \(ingredient.unit.rawValue)")
+                                .font(.caption)
+                                .foregroundStyle(.secondary)
+                        }
 
-                    Spacer()
+                        Spacer()
 
-                    VStack(alignment: .trailing) {
-                        Text("\(ingredient.currentStock, specifier: "%.2f") \(ingredient.unit.rawValue)")
-                            .font(.subheadline)
-                        if ingredient.currentStock <= ingredient.reorderLevel {
-                            Text("Low Stock")
-                                .font(.caption2)
-                                .padding(.horizontal, 6)
-                                .padding(.vertical, 2)
-                                .background(Color.red.opacity(0.15))
-                                .foregroundStyle(.red)
-                                .clipShape(Capsule())
+                        VStack(alignment: .trailing) {
+                            Text("\(ingredient.currentStock, specifier: "%.2f") \(ingredient.unit.rawValue)")
+                                .font(.subheadline)
+                            if ingredient.currentStock <= ingredient.reorderLevel {
+                                Text("Low Stock")
+                                    .font(.caption2)
+                                    .padding(.horizontal, 6)
+                                    .padding(.vertical, 2)
+                                    .background(Color.red.opacity(0.15))
+                                    .foregroundStyle(.red)
+                                    .clipShape(Capsule())
+                            }
                         }
                     }
+                    .padding(.vertical, 4)
                 }
-                .padding(.vertical, 4)
             }
             .toolbar(content: {
                 ToolbarItem(placement: .primaryAction) {

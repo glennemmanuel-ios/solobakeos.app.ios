@@ -14,21 +14,26 @@ extension OpeningStockSheet {
     @Observable
     class ViewModel {
         var quantity = ""
-        var unitCost = ""
+        var totalAmountPaid = ""
         var note = ""
         
+        var computedUnitCost: Double? {
+            guard let qty = Double(quantity), qty > 0,
+                  let total = Double(totalAmountPaid), total > 0 else { return nil }
+            return total / qty
+        }
+        
         var isFormValid: Bool {
-            guard let qty = Double(quantity), let cost = Double(unitCost) else { return false }
-            return qty > 0 && cost > 0
+            computedUnitCost != nil
         }
         
         func save(for ingredient: Ingredient, context: ModelContext) {
-            guard let qty = Double(quantity), let cost = Double(unitCost) else { return }
+            guard let qty = Double(quantity), let unitCost = computedUnitCost else { return }
             
             let transaction = InventoryTransaction(
                 date: .now,
                 quantity: qty,
-                unitCost: cost,
+                unitCost: unitCost,
                 reason: .openingStock,
                 note: note.isEmpty ? nil : note,
                 ingredient: ingredient

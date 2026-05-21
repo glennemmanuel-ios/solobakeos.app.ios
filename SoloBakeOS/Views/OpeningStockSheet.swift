@@ -19,6 +19,10 @@ struct OpeningStockSheet: View {
     private var currencyCode: String {
         Locale.current.currency?.identifier ?? "USD"
     }
+    
+    private var unitLabel: String {
+        ingredient.unit == .custom ? ingredient.customUnitLabel ?? "units" : ingredient.unit.rawValue
+    }
 
     var body: some View {
         NavigationStack {
@@ -33,17 +37,23 @@ struct OpeningStockSheet: View {
                     HStack {
                         TextField("Quantity", text: $viewModel.quantity)
                             .keyboardType(.decimalPad)
-                        Text(ingredient.unit == .custom ? ingredient.customUnitLabel ?? "units" : ingredient.unit.rawValue)
+                        Text(unitLabel)
                             .foregroundStyle(.secondary)
                     }
 
                     HStack {
                         Text(currencyCode)
                             .foregroundStyle(.secondary)
-                        TextField("Unit Cost", text: $viewModel.unitCost)
+                        TextField("Total amount paid", text: $viewModel.totalAmountPaid)
                             .keyboardType(.decimalPad)
-                        Text("per \(ingredient.unit == .custom ? ingredient.customUnitLabel ?? "unit" : ingredient.unit.rawValue)")
-                            .foregroundStyle(.secondary)
+                    }
+                    
+                    if let computed = viewModel.computedUnitCost {
+                        LabeledContent("Cost per \(unitLabel)") {
+                            Text(computed.formatted(.currency(code: currencyCode)))
+                                .foregroundStyle(.green)
+                                .bold()
+                        }
                     }
                 }
 

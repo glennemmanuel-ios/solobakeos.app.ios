@@ -42,6 +42,16 @@ extension InventoryTransaction {
         case productionOrderConfirmed
         case productionOrderEdited
         case productionOrderVoided
+        
+        var displayName: String {
+            switch self {
+            case .openingStock:             return "Opening Stock"
+            case .manualAdjustment:         return "Manual Adjustment"
+            case .productionOrderConfirmed: return "Production Order"
+            case .productionOrderEdited:    return "Order Edit"
+            case .productionOrderVoided:    return "Order Voided"
+            }
+        }
     }
     
 }
