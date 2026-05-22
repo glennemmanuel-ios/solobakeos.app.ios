@@ -10,51 +10,92 @@ import SwiftData
 
 @Model
 class BreadRecipe {
-    
+
     var name: String
     var version: Int
     var isCurrentVersion: Bool
-    var recipeGroupID: UUID // links all versions of the same recipe
-    var yield: Int // how many pieces this recipe produces
-    
+    var recipeGroupID: UUID
+    var yield: Int
+    var yieldUnit: YieldUnit
+    var customYieldLabel: String?  // used when yieldUnit == .custom
+
     @Relationship(deleteRule: .cascade, inverse: \RecipeIngredient.recipe)
     var recipeIngredients: [RecipeIngredient] = []
-    
-    init(name: String, version: Int = 1, isCurrentVersion: Bool = true, recipeGroupID: UUID = UUID(), yield: Int) {
+
+    init(
+        name: String,
+        version: Int = 1,
+        isCurrentVersion: Bool = true,
+        recipeGroupID: UUID = UUID(),
+        yield: Int,
+        yieldUnit: YieldUnit = .pieces
+    ) {
         self.name = name
         self.version = version
         self.isCurrentVersion = isCurrentVersion
         self.recipeGroupID = recipeGroupID
         self.yield = yield
+        self.yieldUnit = yieldUnit
     }
-    
+
+}
+
+// MARK: - Yield Unit
+
+extension BreadRecipe {
+
+    enum YieldUnit: String, Codable, CaseIterable {
+        case pieces = "pcs"
+        case tray   = "tray"
+        case dozen  = "dozen"
+        case loaf   = "loaf"
+        case pack   = "pack"
+        case custom = "custom"
+    }
+
+}
+
+// MARK: - Computed Display
+
+extension BreadRecipe {
+
+    /// e.g. "24 pcs", "1 tray", "2 loaves"
+    var yieldLabel: String {
+        let unit = yieldUnit == .custom ? (customYieldLabel ?? "units") : yieldUnit.rawValue
+        return "\(yield) \(unit)"
+    }
+
+    /// e.g. "per pc", "per tray"
+    var perUnitLabel: String {
+        if yieldUnit == .custom { return "per \(customYieldLabel ?? "unit")" }
+        switch yieldUnit {
+        case .pieces: return "per pc"
+        case .tray:   return "per tray"
+        case .dozen:  return "per dozen"
+        case .loaf:   return "per loaf"
+        case .pack:   return "per pack"
+        case .custom: return "per unit"
+        }
+    }
+
 }
 
 // MARK: - Helper Functions
 
 extension BreadRecipe {
 
-    /// Total ingredient cost to produce `quantity` units.
-    /// = Σ(recipeIngredient.quantity × ingredient.weightedAverageCost) × quantity
     func costOfGoods(quantity: Int) -> Double {
-        // total ingredient cost for one full batch
         let batchCost = recipeIngredients.reduce(0.0) { total, item in
             let cost = item.quantity * item.ingredient.weightedAverageCost
             let roundedCost = ceil(cost)
-            print("Ingredient: \(item.ingredient.name), cost: \(roundedCost)")
             return total + roundedCost
         }
-        // cost per piece × requested quantity
         let costPerPiece = ceil(batchCost / Double(yield))
         let overheadMargin = ceil(costPerPiece * 0.4)
-        print("Overhead Margin: \(overheadMargin)")
         let finalCostPerPiece = costPerPiece + overheadMargin
         return finalCostPerPiece * Double(quantity)
     }
 
-    /// Latest selling price for this recipe group.
-    /// Accepts all price history records since RecipePriceHistory
-    /// is not directly related — it links via recipeGroupID across versions.
     func currentSellingPrice(from priceHistories: [RecipePriceHistory]) -> Double? {
         priceHistories
             .filter { $0.recipeGroupID == recipeGroupID }
@@ -63,8 +104,6 @@ extension BreadRecipe {
             .sellingPrice
     }
 
-    /// Profit margin as a percentage (0–100).
-    /// = (revenue - costOfGoods) / revenue × 100
     func profitMargin(quantity: Int, from priceHistories: [RecipePriceHistory]) -> Double? {
         guard let price = currentSellingPrice(from: priceHistories) else { return nil }
         let revenue = price * Double(quantity)
@@ -74,7 +113,6 @@ extension BreadRecipe {
     }
 
 }
-
 
 // MARK: - Margin Status
 
@@ -89,9 +127,9 @@ extension BreadRecipe {
     func marginStatus(quantity: Int, from priceHistories: [RecipePriceHistory]) -> MarginStatus? {
         guard let margin = profitMargin(quantity: quantity, from: priceHistories) else { return nil }
         switch margin {
-        case 30...:  return .good
+        case 30...:   return .good
         case 15..<30: return .warning
-        default:     return .critical
+        default:      return .critical
         }
     }
 

@@ -20,7 +20,7 @@ struct ContentView: View {
             }
 
             Tab("Recipes", systemImage: "book.fill") {
-                Text("Recipes")
+                RecipeListView()
             }
 
             Tab("Orders", systemImage: "list.bullet.clipboard.fill") {
