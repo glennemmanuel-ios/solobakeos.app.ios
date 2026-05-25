@@ -15,6 +15,7 @@ extension RecipeDetailView {
 
         var showUpdatePrice = false
         var newSellingPrice = ""
+        var showEditComposition = false
 
         var isUpdatePriceValid: Bool {
             guard let price = Double(newSellingPrice) else { return false }

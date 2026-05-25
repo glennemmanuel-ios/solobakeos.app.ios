@@ -22,6 +22,10 @@ struct RecipeDetailView: View {
     private var cog: Double {
         recipe.costOfGoods(quantity: recipe.yield)
     }
+    
+    private var overheadMargin: Double {
+        recipe.overheadMarginCost
+    }
 
     private var cogPerUnit: Double {
         cog / Double(recipe.yield)
@@ -107,7 +111,9 @@ struct RecipeDetailView: View {
                     Label("Update Selling Price", systemImage: "tag.fill")
                 }
 
-                NavigationLink(destination: Text("Edit Composition — Step 4")) {
+                Button {
+                    viewModel.showEditComposition = true
+                } label: {
                     Label("Edit Composition", systemImage: "pencil.and.list.clipboard")
                 }
 
@@ -139,6 +145,18 @@ struct RecipeDetailView: View {
                     }
                     .padding(.vertical, 2)
                 }
+                
+                // Overhead cost
+                HStack {
+                    Text("Overhead Margin Cost")
+                        .font(.subheadline)
+                        .bold()
+                    Spacer()
+                    Text(overheadMargin.formatted(.currency(code: currencyCode)))
+                        .font(.subheadline)
+                        .bold()
+                }
+                .padding(.vertical, 2)
 
                 // Total batch cost
                 HStack {
@@ -157,6 +175,9 @@ struct RecipeDetailView: View {
         .navigationBarTitleDisplayMode(.large)
         .sheet(isPresented: $viewModel.showUpdatePrice) {
             UpdateSellingPriceSheet(recipe: recipe, vm: viewModel)
+        }
+        .sheet(isPresented: $viewModel.showEditComposition) {  // 👈 add this
+            EditCompositionView(recipe: recipe)
         }
     }
 }

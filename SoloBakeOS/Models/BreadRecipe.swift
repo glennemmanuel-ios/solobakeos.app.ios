@@ -83,17 +83,28 @@ extension BreadRecipe {
 // MARK: - Helper Functions
 
 extension BreadRecipe {
-
-    func costOfGoods(quantity: Int) -> Double {
-        let batchCost = recipeIngredients.reduce(0.0) { total, item in
-            let cost = item.quantity * item.ingredient.weightedAverageCost
-            let roundedCost = ceil(cost)
-            return total + roundedCost
+    
+    /// Raw ingredient cost for one full batch. Single loop, everything derives from this.
+    var rawBatchCost: Double {
+        recipeIngredients.reduce(0.0) { total, item in
+            total + ceil(item.quantity * item.ingredient.weightedAverageCost)
         }
-        let costPerPiece = ceil(batchCost / Double(yield))
-        let overheadMargin = ceil(costPerPiece * 0.4)
-        let finalCostPerPiece = costPerPiece + overheadMargin
-        return finalCostPerPiece * Double(quantity)
+    }
+    
+    /// Overhead applied on top of raw cost per unit (40%)
+    var overheadMarginCost: Double {
+        let costPerUnit = ceil(rawBatchCost / Double(yield))
+        return ceil(costPerUnit * 0.4)
+    }
+    
+    /// Final COG per unit including overhead
+    var costPerUnit: Double {
+        ceil(rawBatchCost / Double(yield)) + overheadMarginCost
+    }
+    
+    /// COG for a given quantity — used for margin calc and order costing
+    func costOfGoods(quantity: Int) -> Double {
+        costPerUnit * Double(quantity)
     }
 
     func currentSellingPrice(from priceHistories: [RecipePriceHistory]) -> Double? {

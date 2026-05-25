@@ -124,7 +124,7 @@ struct AddRecipeView: View {
 
 // MARK: - Ingredient Picker Sheet
 
-private struct IngredientPickerSheet: View {
+struct IngredientPickerSheet: View {
     let allIngredients: [Ingredient]
     let alreadyAdded: [Ingredient]
     let onSelect: (Ingredient) -> Void
