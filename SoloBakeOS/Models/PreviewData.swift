@@ -58,10 +58,23 @@ struct PreviewData {
         
         container.mainContext.insert(recipe)
         container.mainContext.insert(price)
+        
+        let pandesalPrice = RecipePriceHistory(sellingPrice: 4.0, recipeGroupID: pandesal.recipeGroupID)
+        container.mainContext.insert(pandesal)
+        container.mainContext.insert(pandesalPrice)
+        
         try? container.mainContext.save()
         
-        
         return container
+    }
+    
+    static var pandesal: BreadRecipe {
+        let recipe = BreadRecipe(name: "Pandesal", yield: 24, yieldUnit: .pieces)
+        let ri1 = RecipeIngredient(quantity: 0.5, ingredient: flour, recipe: recipe)
+        let ri2 = RecipeIngredient(quantity: 0.05, ingredient: rawSugar, recipe: recipe)
+        let ri3 = RecipeIngredient(quantity: 0.01, ingredient: salt, recipe: recipe)
+        recipe.recipeIngredients = [ri1, ri2, ri3]
+        return recipe
     }
     
     static func sanityCheck() {

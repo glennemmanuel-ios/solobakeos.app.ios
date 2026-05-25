@@ -22,7 +22,7 @@ struct RecipeListView: View {
     var body: some View {
         NavigationStack {
             List(viewModel.filtered(recipes)) { recipe in
-                NavigationLink(destination: Text("Recipe Detail — coming soon")) {
+                NavigationLink(destination: RecipeDetailView(recipe: recipe)) {
                     RecipeRowView(
                         recipe: recipe,
                         priceHistories: priceHistories,
