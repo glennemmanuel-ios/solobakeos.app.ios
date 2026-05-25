@@ -121,7 +121,7 @@ struct RecipeDetailView: View {
                     Label("Version History", systemImage: "clock.arrow.trianglehead.counterclockwise.rotate.90")
                 }
 
-                NavigationLink(destination: Text("Price History — Step 7")) {
+                NavigationLink(destination: RecipePriceHistoryView(recipe: recipe)) {
                     Label("Price History", systemImage: "chart.line.uptrend.xyaxis")
                 }
             }
