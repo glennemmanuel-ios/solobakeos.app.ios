@@ -51,7 +51,7 @@ struct RecipeListView: View {
                 }
             }
             .sheet(isPresented: $showAddRecipe) {
-                Text("Add Recipe — coming soon")
+                AddRecipeView()
             }
         }
     }
