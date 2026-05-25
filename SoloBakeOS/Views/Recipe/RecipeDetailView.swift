@@ -117,7 +117,7 @@ struct RecipeDetailView: View {
                     Label("Edit Composition", systemImage: "pencil.and.list.clipboard")
                 }
 
-                NavigationLink(destination: Text("Version History — Step 6")) {
+                NavigationLink(destination: RecipeVersionHistoryView(recipe: recipe)) {
                     Label("Version History", systemImage: "clock.arrow.trianglehead.counterclockwise.rotate.90")
                 }
 
