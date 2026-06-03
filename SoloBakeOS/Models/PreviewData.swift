@@ -20,7 +20,7 @@ struct PreviewData {
     
     static var previewContainer: ModelContainer {
         let config = ModelConfiguration(isStoredInMemoryOnly: true)
-        let container = try! ModelContainer(for: Ingredient.self, RecipeIngredient.self, BreadRecipe.self, RecipePriceHistory.self, InventoryTransaction.self, configurations: config)
+        let container = try! ModelContainer(for: Ingredient.self, RecipeIngredient.self, BreadRecipe.self, RecipePriceHistory.self, InventoryTransaction.self, ProductionOrder.self, ProductionOrderItem.self, ProductionOrderEdit.self, configurations: config)
 
         // Seed transactions
         let t1 = InventoryTransaction(date: .now, quantity: 25, unitCost: 39, reason: .openingStock, ingredient: flour)
@@ -62,6 +62,30 @@ struct PreviewData {
         let pandesalPrice = RecipePriceHistory(sellingPrice: 4.0, recipeGroupID: pandesal.recipeGroupID)
         container.mainContext.insert(pandesal)
         container.mainContext.insert(pandesalPrice)
+        
+        let order1 = ProductionOrder(status: .confirmed, totalCostAtConfirmation: 120.0)
+        let item1a = ProductionOrderItem(quantityToBake: 24, recipe: pandesal, order: order1)
+        item1a.committedQuantity = 24
+        order1.items = [item1a]
+
+        let order2 = ProductionOrder()  // draft
+        let item2a = ProductionOrderItem(quantityToBake: 48, recipe: pandesal, order: order2)
+        order2.items = [item2a]
+
+        let order3 = ProductionOrder(
+            date: Calendar.current.date(byAdding: .day, value: -1, to: .now)!,
+            status: .voided
+        )
+        let item3a = ProductionOrderItem(quantityToBake: 24, recipe: pandesal, order: order3)
+        order3.items = [item3a]
+
+        container.mainContext.insert(order1)
+        container.mainContext.insert(order2)
+        container.mainContext.insert(order3)
+
+        container.mainContext.insert(order1)
+        container.mainContext.insert(order2)
+        container.mainContext.insert(order3)
         
         try? container.mainContext.save()
         

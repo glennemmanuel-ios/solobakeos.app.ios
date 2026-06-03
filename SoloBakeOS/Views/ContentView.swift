@@ -24,7 +24,7 @@ struct ContentView: View {
             }
 
             Tab("Orders", systemImage: "list.bullet.clipboard.fill") {
-                Text("Orders")
+                OrderListView()
             }
         }
     }
