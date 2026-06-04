@@ -15,53 +15,74 @@ struct IngredientListView: View {
 
     var body: some View {
         NavigationStack {
-            List(ingredients) { ingredient in
+            List(viewModel.filtered(ingredients)) { ingredient in
                 NavigationLink(destination: IngredientDetailView(ingredient: ingredient)) {
-                    HStack {
-                        VStack(alignment: .leading) {
-                            Text(ingredient.name)
-                                .font(.headline)
-                            Text("Weighted Average Cost: \(viewModel.formattedWeightedAverageCost(ingredient: ingredient)) / \(ingredient.unit.rawValue)")
-                                .font(.caption)
-                                .foregroundStyle(.secondary)
-                        }
-
-                        Spacer()
-
-                        VStack(alignment: .trailing) {
-                            Text("\(ingredient.currentStock, specifier: "%.2f") \(ingredient.unit.rawValue)")
-                                .font(.subheadline)
-                            if ingredient.currentStock <= ingredient.reorderLevel {
-                                Text("Low Stock")
-                                    .font(.caption2)
-                                    .padding(.horizontal, 6)
-                                    .padding(.vertical, 2)
-                                    .background(Color.red.opacity(0.15))
-                                    .foregroundStyle(.red)
-                                    .clipShape(Capsule())
-                            }
-                        }
-                    }
-                    .padding(.vertical, 4)
+                    IngredientRowView(ingredient: ingredient)
                 }
             }
-            .toolbar(content: {
+            .searchable(text: $viewModel.searchText, prompt: "Search ingredients")
+            .navigationTitle("Inventory")
+            .toolbar {
                 ToolbarItem(placement: .primaryAction) {
                     Button { showAddIngredient = true } label: {
                         Label("Add Ingredient", systemImage: "plus")
                     }
                 }
-            })
-            .navigationTitle("Inventory")
+            }
             .overlay {
                 if ingredients.isEmpty {
-                    ContentUnavailableView("No Ingredients", systemImage: "shippingbox", description: Text("Add your first ingredient to get started."))
+                    ContentUnavailableView(
+                        "No Ingredients",
+                        systemImage: "shippingbox",
+                        description: Text("Add your first ingredient to get started.")
+                    )
+                } else if viewModel.filtered(ingredients).isEmpty {
+                    ContentUnavailableView.search(text: viewModel.searchText)
                 }
             }
             .sheet(isPresented: $showAddIngredient) {
                 AddIngredientView()
             }
         }
+    }
+}
+
+// MARK: - Ingredient Row
+
+private struct IngredientRowView: View {
+    let ingredient: Ingredient
+
+    private var unitLabel: String {
+        ingredient.unit == .custom ? ingredient.customUnitLabel ?? "units" : ingredient.unit.rawValue
+    }
+
+    var body: some View {
+        HStack {
+            VStack(alignment: .leading) {
+                Text(ingredient.name)
+                    .font(.headline)
+                Text("WAC: \(ingredient.weightedAverageCost.formatted(.currency(code: Locale.currencyCode))) / \(unitLabel)")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+            }
+
+            Spacer()
+
+            VStack(alignment: .trailing) {
+                Text(String(format: "%.2f \(unitLabel)", ingredient.currentStock))
+                    .font(.subheadline)
+                if ingredient.currentStock <= ingredient.reorderLevel {
+                    Text("Low Stock")
+                        .font(.caption2)
+                        .padding(.horizontal, 6)
+                        .padding(.vertical, 2)
+                        .background(Color.red.opacity(0.15))
+                        .foregroundStyle(.red)
+                        .clipShape(Capsule())
+                }
+            }
+        }
+        .padding(.vertical, 4)
     }
 }
 

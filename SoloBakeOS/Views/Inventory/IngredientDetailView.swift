@@ -54,8 +54,12 @@ struct IngredientDetailView: View {
             // MARK: - Transaction History
             Section("Transaction History") {
                 if ingredient.transactions.isEmpty {
-                    Text("No transactions yet.")
-                        .foregroundStyle(.secondary)
+                    ContentUnavailableView(
+                        "No Transactions",
+                        systemImage: "tray",
+                        description: Text("Stock in or adjustments will appear here.")
+                    )
+                    .listRowBackground(Color.clear)
                 } else {
                     ForEach(ingredient.transactions.sorted(by: { $0.date > $1.date })) { transaction in
                         TransactionRowView(transaction: transaction, unitLabel: unitLabel)

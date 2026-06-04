@@ -21,8 +21,7 @@ struct RecipeListView: View {
                 NavigationLink(destination: RecipeDetailView(recipe: recipe)) {
                     RecipeRowView(
                         recipe: recipe,
-                        priceHistories: priceHistories,
-                        currencyCode: Locale.currencyCode
+                        priceHistories: priceHistories
                     )
                 }
             }
@@ -38,12 +37,14 @@ struct RecipeListView: View {
                 }
             }
             .overlay {
-                if viewModel.filtered(recipes).isEmpty {
+                if recipes.filter({ $0.isCurrentVersion }).isEmpty {
                     ContentUnavailableView(
                         "No Recipes",
                         systemImage: "book",
                         description: Text("Add your first recipe to get started.")
                     )
+                } else if viewModel.filtered(recipes).isEmpty {
+                    ContentUnavailableView.search(text: viewModel.searchText)
                 }
             }
             .sheet(isPresented: $showAddRecipe) {
@@ -58,7 +59,6 @@ struct RecipeListView: View {
 private struct RecipeRowView: View {
     let recipe: BreadRecipe
     let priceHistories: [RecipePriceHistory]
-    let currencyCode: String
 
     var body: some View {
         HStack {
@@ -78,13 +78,13 @@ private struct RecipeRowView: View {
                 // COG per piece
                 let cog = recipe.costOfGoods(quantity: recipe.yield)
                 let cogPerPiece = cog / Double(recipe.yield)
-                Text("COG: \(cogPerPiece.formatted(.currency(code: currencyCode)))/ \(recipe.perUnitLabel)")
+                Text("COG: \(cogPerPiece.formatted(.currency(code: Locale.currencyCode)))/ \(recipe.perUnitLabel)")
                     .font(.caption)
                     .foregroundStyle(.secondary)
                 
                 // Selling price
                 if let price = recipe.currentSellingPrice(from: priceHistories) {
-                    Text("Price: \(price.formatted(.currency(code: currencyCode)))")
+                    Text("Price: \(price.formatted(.currency(code: Locale.currencyCode)))")
                         .font(.caption)
                         .foregroundStyle(.secondary)
                 }

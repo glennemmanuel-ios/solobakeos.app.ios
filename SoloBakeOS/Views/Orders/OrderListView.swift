@@ -24,7 +24,7 @@ struct OrderListView: View {
                         ForEach(group.orders) { order in
                             // Replace placeholder
                             NavigationLink(destination: OrderDetailView(order: order)) {
-                                OrderRowView(order: order, vm: viewModel, currencyCode: Locale.currencyCode)
+                                OrderRowView(order: order, vm: viewModel)
                             }
                         }
                     }
@@ -69,7 +69,6 @@ struct OrderListView: View {
 private struct OrderRowView: View {
     let order: ProductionOrder
     let vm: OrderListView.ViewModel
-    let currencyCode: String
 
     var body: some View {
         HStack {
@@ -105,7 +104,7 @@ private struct OrderRowView: View {
                     .clipShape(Capsule())
 
                 if order.status == .confirmed {
-                    Text(order.totalCostAtConfirmation.formatted(.currency(code: currencyCode)))
+                    Text(order.totalCostAtConfirmation.formatted(.currency(code: Locale.currencyCode)))
                         .font(.caption)
                         .foregroundStyle(.secondary)
                 }
