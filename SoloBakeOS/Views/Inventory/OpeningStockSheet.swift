@@ -15,10 +15,6 @@ struct OpeningStockSheet: View {
     @Environment(\.dismiss) private var dismiss
 
     @State private var viewModel = ViewModel()
-
-    private var currencyCode: String {
-        Locale.current.currency?.identifier ?? "USD"
-    }
     
     private var unitLabel: String {
         ingredient.unit == .custom ? ingredient.customUnitLabel ?? "units" : ingredient.unit.rawValue
@@ -42,7 +38,7 @@ struct OpeningStockSheet: View {
                     }
 
                     HStack {
-                        Text(currencyCode)
+                        Text(Locale.currencyCode)
                             .foregroundStyle(.secondary)
                         TextField("Total amount paid", text: $viewModel.totalAmountPaid)
                             .keyboardType(.decimalPad)
@@ -50,7 +46,7 @@ struct OpeningStockSheet: View {
                     
                     if let computed = viewModel.computedUnitCost {
                         LabeledContent("Cost per \(unitLabel)") {
-                            Text(computed.formatted(.currency(code: currencyCode)))
+                            Text(computed.formatted(.currency(code: Locale.currencyCode)))
                                 .foregroundStyle(.green)
                                 .bold()
                         }
@@ -61,8 +57,10 @@ struct OpeningStockSheet: View {
                     TextField("e.g. Initial stock from supplier", text: $viewModel.note)
                 }
             }
+            .scrollDismissesKeyboard(.interactively)
             .navigationTitle("Opening Stock")
             .navigationBarTitleDisplayMode(.inline)
+            .withKeyboardDoneButton()
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
                     Button("Skip") { dismiss() }

@@ -36,8 +36,10 @@ struct AddIngredientView: View {
                         .keyboardType(.decimalPad)
                 }
             }
+            .scrollDismissesKeyboard(.interactively)
             .navigationTitle("New Ingredient")
             .navigationBarTitleDisplayMode(.inline)
+            .withKeyboardDoneButton()
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
                     Button("Cancel") { dismiss() }

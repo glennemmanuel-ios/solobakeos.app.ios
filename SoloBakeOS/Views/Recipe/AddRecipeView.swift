@@ -14,6 +14,12 @@ struct AddRecipeView: View {
 
     @Query private var allIngredients: [Ingredient]
     @State private var viewModel = ViewModel()
+    
+    private var yieldUnitLabel: String {
+        viewModel.yieldUnit == .custom
+        ? (viewModel.customYieldLabel.isEmpty ? "units" : viewModel.customYieldLabel)
+        : viewModel.yieldUnit.rawValue
+    }
 
     var body: some View {
         NavigationStack {
@@ -36,7 +42,7 @@ struct AddRecipeView: View {
                     HStack {
                         TextField("Yield Amount", text: $viewModel.yieldAmount)
                             .keyboardType(.numberPad)
-                        Text(viewModel.yieldUnit == .custom ? viewModel.customYieldLabel.isEmpty ? "units" : viewModel.customYieldLabel : viewModel.yieldUnit.rawValue)
+                        Text(yieldUnitLabel)
                             .foregroundStyle(.secondary)
                     }
                 }
@@ -46,7 +52,7 @@ struct AddRecipeView: View {
                     HStack {
                         Text(Locale.currencyCode)
                             .foregroundStyle(.secondary)
-                        TextField("Selling price per \(viewModel.yieldUnit == .custom ? viewModel.customYieldLabel.isEmpty ? "unit" : viewModel.customYieldLabel : viewModel.yieldUnit.rawValue)", text: $viewModel.initialSellingPrice)
+                        TextField("Selling price per \(yieldUnitLabel)", text: $viewModel.initialSellingPrice)
                             .keyboardType(.decimalPad)
                     }
                 }
@@ -93,8 +99,10 @@ struct AddRecipeView: View {
                     }
                 }
             }
+            .scrollDismissesKeyboard(.interactively)
             .navigationTitle("New Recipe")
             .navigationBarTitleDisplayMode(.inline)
+            .withKeyboardDoneButton()
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
                     Button("Cancel") { dismiss() }

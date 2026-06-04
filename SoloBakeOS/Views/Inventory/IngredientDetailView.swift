@@ -161,8 +161,10 @@ private struct StockInSheet: View {
                     TextField("e.g. Delivery from supplier", text: $viewModel.stockInNote)
                 }
             }
+            .scrollDismissesKeyboard(.interactively)
             .navigationTitle("Stock In")
             .navigationBarTitleDisplayMode(.inline)
+            .withKeyboardDoneButton()
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
                     Button("Cancel") { dismiss() }

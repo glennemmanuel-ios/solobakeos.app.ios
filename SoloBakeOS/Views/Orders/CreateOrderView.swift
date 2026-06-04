@@ -69,8 +69,10 @@ struct CreateOrderView: View {
                     }
                 }
             }
+            .scrollDismissesKeyboard(.interactively)
             .navigationTitle("New Order")
             .navigationBarTitleDisplayMode(.inline)
+            .withKeyboardDoneButton()
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
                     Button("Cancel") { dismiss() }
