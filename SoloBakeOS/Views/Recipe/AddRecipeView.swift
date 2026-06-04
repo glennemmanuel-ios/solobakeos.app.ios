@@ -15,10 +15,6 @@ struct AddRecipeView: View {
     @Query private var allIngredients: [Ingredient]
     @State private var viewModel = ViewModel()
 
-    private var currencyCode: String {
-        Locale.current.currency?.identifier ?? "PHP"
-    }
-
     var body: some View {
         NavigationStack {
             Form {
@@ -48,7 +44,7 @@ struct AddRecipeView: View {
                 // MARK: Initial Selling Price
                 Section("Selling Price") {
                     HStack {
-                        Text(currencyCode)
+                        Text(Locale.currencyCode)
                             .foregroundStyle(.secondary)
                         TextField("Selling price per \(viewModel.yieldUnit == .custom ? viewModel.customYieldLabel.isEmpty ? "unit" : viewModel.customYieldLabel : viewModel.yieldUnit.rawValue)", text: $viewModel.initialSellingPrice)
                             .keyboardType(.decimalPad)

@@ -82,8 +82,7 @@ extension IngredientDetailView {
         }
 
         func formattedCurrency(_ value: Double) -> String {
-            let code = Locale.current.currency?.identifier ?? "PHP"
-            return value.formatted(.currency(code: code))
+            return value.formatted(.currency(code: Locale.currencyCode))
         }
     }
 }

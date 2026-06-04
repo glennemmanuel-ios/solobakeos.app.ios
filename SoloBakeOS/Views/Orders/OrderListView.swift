@@ -12,10 +12,6 @@ struct OrderListView: View {
     @Query private var orders: [ProductionOrder]
     @State private var viewModel = ViewModel()
 
-    private var currencyCode: String {
-        Locale.current.currency?.identifier ?? "PHP"
-    }
-
     private var grouped: [(date: Date, orders: [ProductionOrder])] {
         viewModel.grouped(orders)
     }
@@ -26,8 +22,9 @@ struct OrderListView: View {
                 ForEach(grouped, id: \.date) { group in
                     Section(header: Text(group.date.formatted(date: .complete, time: .omitted))) {
                         ForEach(group.orders) { order in
-                            NavigationLink(destination: Text("Order Detail — Step 4")) {
-                                OrderRowView(order: order, vm: viewModel, currencyCode: currencyCode)
+                            // Replace placeholder
+                            NavigationLink(destination: OrderDetailView(order: order)) {
+                                OrderRowView(order: order, vm: viewModel, currencyCode: Locale.currencyCode)
                             }
                         }
                     }

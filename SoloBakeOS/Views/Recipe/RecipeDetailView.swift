@@ -15,10 +15,6 @@ struct RecipeDetailView: View {
     @Query private var priceHistories: [RecipePriceHistory]
     @State private var viewModel = ViewModel()
 
-    private var currencyCode: String {
-        Locale.current.currency?.identifier ?? "PHP"
-    }
-
     private var cog: Double {
         recipe.costOfGoods(quantity: recipe.yield)
     }
@@ -76,13 +72,13 @@ struct RecipeDetailView: View {
                     // COG vs Price
                     VStack(alignment: .leading, spacing: 8) {
                         LabeledContent("COG \(recipe.perUnitLabel)") {
-                            Text(cogPerUnit.formatted(.currency(code: currencyCode)))
+                            Text(cogPerUnit.formatted(.currency(code: Locale.currencyCode)))
                                 .bold()
                         }
 
                         LabeledContent("Selling Price") {
                             if let price = sellingPrice {
-                                Text(price.formatted(.currency(code: currencyCode)))
+                                Text(price.formatted(.currency(code: Locale.currencyCode)))
                             } else {
                                 Text("Not set")
                                     .foregroundStyle(.secondary)
@@ -139,7 +135,7 @@ struct RecipeDetailView: View {
                                 .foregroundStyle(.secondary)
                         }
                         Spacer()
-                        Text(item.cost.formatted(.currency(code: currencyCode)))
+                        Text(item.cost.formatted(.currency(code: Locale.currencyCode)))
                             .font(.subheadline)
                             .foregroundStyle(.secondary)
                     }
@@ -152,7 +148,7 @@ struct RecipeDetailView: View {
                         .font(.subheadline)
                         .bold()
                     Spacer()
-                    Text(overheadMargin.formatted(.currency(code: currencyCode)))
+                    Text(overheadMargin.formatted(.currency(code: Locale.currencyCode)))
                         .font(.subheadline)
                         .bold()
                 }
@@ -164,7 +160,7 @@ struct RecipeDetailView: View {
                         .font(.subheadline)
                         .bold()
                     Spacer()
-                    Text(cog.formatted(.currency(code: currencyCode)))
+                    Text(cog.formatted(.currency(code: Locale.currencyCode)))
                         .font(.subheadline)
                         .bold()
                 }
@@ -191,10 +187,6 @@ private struct UpdateSellingPriceSheet: View {
     @Environment(\.modelContext) private var context
     @Environment(\.dismiss) private var dismiss
 
-    private var currencyCode: String {
-        Locale.current.currency?.identifier ?? "PHP"
-    }
-
     var body: some View {
         NavigationStack {
             Form {
@@ -206,7 +198,7 @@ private struct UpdateSellingPriceSheet: View {
 
                 Section("New Selling Price") {
                     HStack {
-                        Text(currencyCode)
+                        Text(Locale.currencyCode)
                             .foregroundStyle(.secondary)
                         TextField("Price \(recipe.perUnitLabel)", text: $vm.newSellingPrice)
                             .keyboardType(.decimalPad)

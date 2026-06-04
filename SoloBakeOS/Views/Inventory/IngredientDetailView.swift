@@ -80,10 +80,6 @@ private struct TransactionRowView: View {
     let transaction: InventoryTransaction
     let unitLabel: String
 
-    private var currencyCode: String {
-        Locale.current.currency?.identifier ?? "PHP"
-    }
-
     var body: some View {
         HStack {
             VStack(alignment: .leading, spacing: 2) {
@@ -106,7 +102,7 @@ private struct TransactionRowView: View {
                     .font(.subheadline)
                     .foregroundStyle(transaction.quantity >= 0 ? .green : .red)
                 if let cost = transaction.unitCost {
-                    Text("\(cost.formatted(.currency(code: currencyCode))) / \(unitLabel)")
+                    Text("\(cost.formatted(.currency(code: Locale.currencyCode))) / \(unitLabel)")
                         .font(.caption)
                         .foregroundStyle(.secondary)
                 }
@@ -142,7 +138,7 @@ private struct StockInSheet: View {
                     }
 
                     HStack {
-                        Text(Locale.current.currency?.identifier ?? "PHP")
+                        Text(Locale.currencyCode)
                             .foregroundStyle(.secondary)
                         TextField("Total amount paid", text: $viewModel.totalAmountPaid)
                             .keyboardType(.decimalPad)
@@ -150,7 +146,7 @@ private struct StockInSheet: View {
                     
                     if let computed = viewModel.computedUnitCost {
                         LabeledContent("Cost per \(unitLabel)") {
-                            Text(computed.formatted(.currency(code: Locale.current.currency?.identifier ?? "PHP")))
+                            Text(computed.formatted(.currency(code: Locale.currencyCode)))
                                 .foregroundStyle(.green)
                                 .bold()
                         }

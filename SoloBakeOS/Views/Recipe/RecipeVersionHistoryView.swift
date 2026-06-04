@@ -13,10 +13,6 @@ struct RecipeVersionHistoryView: View {
 
     @Query private var allRecipes: [BreadRecipe]
 
-    private var currencyCode: String {
-        Locale.current.currency?.identifier ?? "PHP"
-    }
-
     /// All versions of this recipe group, newest first
     private var versions: [BreadRecipe] {
         allRecipes
@@ -60,7 +56,7 @@ struct RecipeVersionHistoryView: View {
 
                     // COG per unit for this version
                     VStack(alignment: .trailing, spacing: 2) {
-                        Text(version.costPerUnit.formatted(.currency(code: currencyCode)))
+                        Text(version.costPerUnit.formatted(.currency(code: Locale.currencyCode)))
                             .font(.subheadline)
                             .bold()
                         Text("COG \(version.perUnitLabel)")

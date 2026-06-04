@@ -15,10 +15,6 @@ struct RecipeListView: View {
     @State private var viewModel = ViewModel()
     @State private var showAddRecipe = false
 
-    private var currencyCode: String {
-        Locale.current.currency?.identifier ?? "PHP"
-    }
-
     var body: some View {
         NavigationStack {
             List(viewModel.filtered(recipes)) { recipe in
@@ -26,7 +22,7 @@ struct RecipeListView: View {
                     RecipeRowView(
                         recipe: recipe,
                         priceHistories: priceHistories,
-                        currencyCode: currencyCode
+                        currencyCode: Locale.currencyCode
                     )
                 }
             }

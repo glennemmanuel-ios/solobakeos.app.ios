@@ -14,7 +14,7 @@ extension IngredientListView {
     class ViewModel {
         
         func formattedWeightedAverageCost(ingredient: Ingredient) -> String {
-            let currencyCode = Locale.current.currency?.identifier ?? "PHP"
+            let currencyCode = Locale.currencyCode
             let formattedWAC = ingredient.weightedAverageCost.formatted(.currency(code: currencyCode))
             return formattedWAC
         }

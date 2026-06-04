@@ -13,10 +13,6 @@ struct RecipePriceHistoryView: View {
 
     @Query private var allPriceHistories: [RecipePriceHistory]
 
-    private var currencyCode: String {
-        Locale.current.currency?.identifier ?? "PHP"
-    }
-
     /// All price entries for this recipe group, newest first
     private var priceHistories: [RecipePriceHistory] {
         allPriceHistories
@@ -43,7 +39,7 @@ struct RecipePriceHistoryView: View {
                             .foregroundStyle(.tertiary)
                     }
                     Spacer()
-                    Text(currentCOG.formatted(.currency(code: currencyCode)))
+                    Text(currentCOG.formatted(.currency(code: Locale.currencyCode)))
                         .font(.headline)
                         .bold()
                 }
@@ -77,7 +73,7 @@ struct RecipePriceHistoryView: View {
                             Spacer()
 
                             VStack(alignment: .trailing, spacing: 2) {
-                                Text(entry.sellingPrice.formatted(.currency(code: currencyCode)))
+                                Text(entry.sellingPrice.formatted(.currency(code: Locale.currencyCode)))
                                     .font(.subheadline)
                                     .bold()
 
