@@ -133,6 +133,14 @@ extension BreadRecipe {
         case good       // > 30% 🟢
         case warning    // 15–30% 🟡
         case critical   // < 15% 🔴
+        
+        var marginEmoji: String {
+            switch self {
+            case .good:     return "🟢"
+            case .warning:  return "🟡"
+            case .critical: return "🔴"
+            }
+        }
     }
 
     func marginStatus(quantity: Int, from priceHistories: [RecipePriceHistory]) -> MarginStatus? {

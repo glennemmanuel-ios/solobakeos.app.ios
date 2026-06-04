@@ -82,10 +82,6 @@ struct PreviewData {
         container.mainContext.insert(order1)
         container.mainContext.insert(order2)
         container.mainContext.insert(order3)
-
-        container.mainContext.insert(order1)
-        container.mainContext.insert(order2)
-        container.mainContext.insert(order3)
         
         try? container.mainContext.save()
         

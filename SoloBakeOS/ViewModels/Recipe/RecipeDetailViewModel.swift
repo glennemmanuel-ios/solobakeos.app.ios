@@ -54,13 +54,5 @@ extension RecipeDetailView {
             case .critical: return .red
             }
         }
-
-        func marginEmoji(_ status: BreadRecipe.MarginStatus) -> String {
-            switch status {
-            case .good:     return "🟢"
-            case .warning:  return "🟡"
-            case .critical: return "🔴"
-            }
-        }
     }
 }

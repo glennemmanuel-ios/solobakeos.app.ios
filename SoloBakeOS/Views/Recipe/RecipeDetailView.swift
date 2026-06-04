@@ -48,7 +48,7 @@ struct RecipeDetailView: View {
                     // Margin indicator
                     VStack(spacing: 4) {
                         if let status = marginStatus, let margin = margin {
-                            Text(viewModel.marginEmoji(status))
+                            Text(status.marginEmoji)
                                 .font(.largeTitle)
                             Text(String(format: "%.1f%%", margin))
                                 .font(.title2)
